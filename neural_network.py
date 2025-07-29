@@ -1,10 +1,8 @@
 import numpy as np
 from activations import sigmoid, sigmoid_deriv, relu, relu_deriv, softmax
 from loss_functions import cross_entropy
-import nnfs
-from nnfs.datasets import spiral_data
+from keras.datasets import mnist
 
-nnfs.init()
 
 np.random.seed(0)
 
@@ -20,6 +18,9 @@ class Layer:
     def forward(self, input):
         x = np.dot(input, self.weights) + self.biases
         self.output = self.activation(x)
+        
+    def backwards_output_layer(self, actual, batch_size):
+        self.propogation_error = (self.output - actual) / batch_size
     
         
         
@@ -30,17 +31,22 @@ class MultilayerPerceptron:
     def add_layer(self, input, neurons, activation):
         self.layers.append(Layer(input, neurons, activation))
         
+(train_X, train_y), (test_X, test_y) = mnist.load_data()
+print('X_train: ' + str(train_X.shape))
+print('Y_train: ' + str(train_y.shape))
+print('X_test:  '  + str(test_X.shape))
+print('Y_test:  '  + str(test_y.shape))
 
-X, y = spiral_data(samples=100, classes=3)
 
-layer1 = Layer(2, 3)
-layer1.forward(X)
+# layer1 = Layer(784, 10)
+# layer1.forward(X)
 
-layer2 = Layer(3, 3, softmax)
-layer2.forward(layer1.output)
-#print(layer2.output[:5])
+# output_layer = Layer(10, 10, softmax)
+# output_layer.forward(layer1.output)
 
-loss = cross_entropy(layer2.output, y)
-print("Loss:", loss)
+# loss = cross_entropy(output_layer.output, y)
+
+# output_layer.backwards_output_layer("temp placeholder", output_layer.output.length)
+# print("Loss:", loss)
 
     
